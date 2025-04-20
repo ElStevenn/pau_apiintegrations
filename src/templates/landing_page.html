@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Integrations – Prototype</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f8;
+      color: #333;
+    }
+    header {
+      background-color: #4A90E2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: opacity 0.2s;
+    }
+    nav a:hover {
+      opacity: 0.8;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      border: 2px solid transparent;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-register {
+      background: #fff;
+      color: #4A90E2;
+    }
+    .btn-login {
+      background: transparent;
+      color: #fff;
+      border: 2px solid #fff;
+    }
+    .btn-register:hover { background: #e6e6e6; }
+    .btn-login:hover { background: rgba(255,255,255,0.2); }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #4A90E2, #50a8e9);
+      color: #fff;
+      text-align: center;
+      padding: 6rem 1rem;
+    }
+    .hero-content {
+      max-width: 800px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .btn-cta {
+      display: inline-block;
+      background: #fff;
+      color: #4A90E2;
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .btn-cta:hover { background: #e6e6e6; }
+
+    .features {
+      padding: 4rem 1rem;
+      background: #fff;
+    }
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .feature {
+      background: #f9fbfc;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .feature:hover { transform: translateY(-5px); }
+    .feature h3 {
+      color: #4A90E2;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+    .feature p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      background: #333;
+      color: #fff;
+      padding: 2rem 1rem;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .footer-container a {
+      color: #4A90E2;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .footer-container a:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="{{ url_for('index') }}" class="logo">API Integrations</a>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="#docs">Docs</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-buttons">
+        {% if user %}
+          <span class="btn btn-register" style="background:transparent; border:none; cursor:default; color:#fff;">
+            {{ user.username }} ({{ user.email }})
+          </span>
+          <a href="{{ url_for('logout') }}" class="btn btn-login" style="border:none;">
+            Logout
+          </a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-register">Register</a>
+          <a href="{{ url_for('login') }}" class="btn btn-login">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Seamless API Integrations</h1>
+      <p>Plug into over 100 services with one unified API. Fast, secure, and scalable – all the tools you need to connect your apps effortlessly.</p>
+      <a href="{{ url_for('register') }}" class="btn-cta">Get Started</a>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-container">
+      <div class="feature">
+        <h3>Easy Authentication</h3>
+        <p>Implement OAuth2 flows in minutes with clear guides and helper libraries.</p>
+      </div>
+      <div class="feature">
+        <h3>Comprehensive Docs</h3>
+        <p>Examples, code samples, and interactive sandbox to speed up your integration.</p>
+      </div>
+      <div class="feature">
+        <h3>Real-Time Webhooks</h3>
+        <p>Subscribe to events and receive instant HTTP callbacks for data changes.</p>
+      </div>
+      <div class="feature">
+        <h3>Enterprise-Grade</h3>
+        <p>High availability, SLA-backed uptime, and dedicated support for your mission-critical apps.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2025 API Integrations. All rights reserved.</p>
+      <div>
+        <a href="#privacy">Privacy Policy</a> |
+        <a href="#terms">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

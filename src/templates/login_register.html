@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register / Login – API Integrations</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:Arial, sans-serif;
+      background:#f4f7f8;
+      color:#333;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+    header {
+      background:#4A90E2;
+    }
+    .container {
+      max-width:1000px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:1rem;
+    }
+    .logo {
+      color:#fff;
+      font-size:1.5rem;
+      font-weight:bold;
+      text-decoration:none;
+    }
+    nav ul { display:flex; gap:1rem; }
+    nav a {
+      color:#fff;
+      text-decoration:none;
+      font-weight:bold;
+      font-size:0.95rem;
+    }
+    .header-buttons { display:flex; gap:0.5rem; }
+    .btn {
+      padding:0.5rem 1rem;
+      border-radius:4px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:background 0.3s,color 0.3s;
+      text-decoration:none;
+    }
+    .btn-register {
+      background:#fff;
+      color:#4A90E2;
+      border:none;
+    }
+    .btn-login {
+      background:transparent;
+      color:#fff;
+      border:2px solid #fff;
+    }
+    .btn-register:hover { background:#e6e6e6; }
+    .btn-login:hover    { background:rgba(255,255,255,0.2); }
+    .btn.active {
+      background:#fff;
+      color:#4A90E2;
+      border:none;
+    }
+    main {
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+    }
+    .form-wrapper {
+      background:#fff;
+      padding:2rem;
+      border-radius:8px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+      width:100%;
+      max-width:400px;
+    }
+    h2 { text-align:center; margin-bottom:1rem; color:#333; }
+    form { display:none; }
+    form.active { display:block; }
+    label {
+      display:block;
+      font-size:0.9rem;
+      color:#555;
+      margin-bottom:0.3rem;
+    }
+    input {
+      width:100%;
+      padding:0.75rem;
+      margin-bottom:1rem;
+      border:1px solid #ccc;
+      border-radius:4px;
+      font-size:1rem;
+    }
+    button {
+      width:100%;
+      padding:0.75rem;
+      background:#4A90E2;
+      color:#fff;
+      border:none;
+      border-radius:4px;
+      font-size:1rem;
+      cursor:pointer;
+      transition:background 0.3s;
+    }
+    button:hover { background:#357ab8; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="logo">API Integrations</a>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="#docs">Docs</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-buttons">
+        <a href="{{ url_for('register') }}" class="btn btn-register {% if active=='register' %}active{% endif %}">Register</a>
+        <a href="{{ url_for('login') }}"    class="btn btn-login {% if active=='login' %}active{% endif %}">Login</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="form-wrapper">
+      <!-- Register Form -->
+      <form id="registerForm" class="{% if active=='register' %}active{% endif %}">
+        <h2>Create Account</h2>
+        <label for="regName">Name</label>
+        <input type="text" id="regName" placeholder="Your Name" required>
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="you@example.com" required>
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <button type="submit">Register</button>
+      </form>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="{% if active=='login' %}active{% endif %}">
+        <h2>Welcome Back</h2>
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // toggle tabs as before
+    const btnReg = document.querySelector('.btn-register');
+    const btnLog = document.querySelector('.btn-login');
+    const regF   = document.getElementById('registerForm');
+    const logF   = document.getElementById('loginForm');
+
+    function toggle(isReg) {
+      regF .classList.toggle('active', isReg);
+      logF .classList.toggle('active', !isReg);
+      btnReg.classList.toggle('active', isReg);
+      btnLog.classList.toggle('active', !isReg);
+    }
+    btnReg.addEventListener('click', () => toggle(true));
+    btnLog.addEventListener('click', () => toggle(false));
+
+    // AJAX submission
+    regF.addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        regName:     regF.regName.value,
+        regEmail:    regF.regEmail.value,
+        regPassword: regF.regPassword.value
+      };
+      const res = await fetch('{{ url_for("register") }}', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.user_id) {
+        window.location = '{{ url_for("plataform") }}';
+      } else {
+        alert(json.error || 'Registration failed');
+      }
+    });
+
+    logF.addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        loginEmail:    logF.loginEmail.value,
+        loginPassword: logF.loginPassword.value
+      };
+      const res = await fetch('{{ url_for("login") }}', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.user_id) {
+        window.location = '{{ url_for("plataform") }}';
+      } else {
+        alert(json.error || 'Login failed');
+      }
+    });
+  </script>
+</body>
+</html>
