@@ -1,1 +1,4 @@
 Flask
+Quart
+python-dotenv
+cryptography

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API Integrations – Prototype</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,9 +38,7 @@
       font-size: 1rem;
       transition: opacity 0.2s;
     }
-    nav a:hover {
-      opacity: 0.8;
-    }
+    nav a:hover { opacity: 0.8; }
     .header-buttons {
       display: flex;
       gap: 0.75rem;
@@ -55,19 +53,17 @@
       text-decoration: none;
       text-align: center;
     }
-    .btn-register {
-      background: #fff;
-      color: #4A90E2;
-    }
+    .btn-register { background: #fff; color: #4A90E2; }
     .btn-login {
       background: transparent;
       color: #fff;
       border: 2px solid #fff;
     }
     .btn-register:hover { background: #e6e6e6; }
-    .btn-login:hover { background: rgba(255,255,255,0.2); }
+    .btn-login:hover   { background: rgba(255,255,255,0.2); }
 
     .hero {
+      position: relative;           /* allow absolute children */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -100,6 +96,27 @@
     }
     .btn-cta:hover { background: #e6e6e6; }
 
+    /* version badge inside hero */
+    .version-badge {
+      position: absolute;
+      top: 2rem;
+      right: 8rem;
+      display: inline-flex;
+      align-items: center;
+      background-color: #4caf50;
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .version-badge .icon {
+      margin-right: 0.4rem;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
     .features {
       padding: 4rem 1rem;
       background: #fff;
@@ -124,10 +141,7 @@
       margin-bottom: 1rem;
       font-size: 1.25rem;
     }
-    .feature p {
-      font-size: 1rem;
-      line-height: 1.5;
-    }
+    .feature p { font-size: 1rem; line-height: 1.5; }
 
     footer {
       background: #333;
@@ -155,37 +169,40 @@
 <body>
   <header>
     <div class="header-container">
-      <a href="{{ url_for('index') }}" class="logo">API Integrations</a>
+      <a href="/" class="logo">API Integrations</a>
       <nav>
         <ul>
-          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="/">Home</a></li>
           <li><a href="#docs">Docs</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
       <div class="header-buttons">
-        {% if user %}
-          <span class="btn btn-register" style="background:transparent; border:none; cursor:default; color:#fff;">
-            {{ user.username }} ({{ user.email }})
+        
+          <span class="btn btn-register"
+                style="background:transparent; border:none; cursor:default; color:#fff;">
+            patsteitor3000 (patsteitor3000@gmail.com)
           </span>
-          <a href="{{ url_for('logout') }}" class="btn btn-login" style="border:none;">
+          <a href="/logout" class="btn btn-login" style="border:none;">
             Logout
           </a>
-        {% else %}
-          <a href="{{ url_for('register') }}" class="btn btn-register">Register</a>
-          <a href="{{ url_for('login') }}" class="btn btn-login">Login</a>
-        {% endif %}
+        
       </div>
     </div>
   </header>
 
-
   <section class="hero">
+    <!-- badge in top-right of hero -->
+    <div class="version-badge">
+      <span class="icon">&#10003;</span>
+      Vestion: 0.1.0
+    </div>
+
     <div class="hero-content">
       <h1>Seamless API Integrations</h1>
       <p>Plug into over 100 services with one unified API. Fast, secure, and scalable – all the tools you need to connect your apps effortlessly.</p>
-      <a href="{{ url_for('register') }}" class="btn-cta">Get Started</a>
+      <a href="/register" class="btn-cta">Get Started</a>
     </div>
   </section>
 

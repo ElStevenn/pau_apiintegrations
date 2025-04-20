@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  integration_application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: integration_application_image
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - ENV=LOCALHOST
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWD}@db-integration:5432/${DB_NAME}
+    networks:
+      - integration-network
+
+  db-integration:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - integrationn-volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWD}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - integration-network
+
+networks:
+  integration-network:
+    driver: bridge
+
+volumes:
+  integrationn-volume:
+    driver: local
