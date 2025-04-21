@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>API Integrations – Prototype</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,6 +42,7 @@
     .header-buttons {
       display: flex;
       gap: 0.75rem;
+      align-items: center;
     }
     .btn {
       padding: 0.5rem 1rem;
@@ -61,9 +62,16 @@
     }
     .btn-register:hover { background: #e6e6e6; }
     .btn-login:hover   { background: rgba(255,255,255,0.2); }
+    .user-label {
+      color: #fff;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+    }
 
     .hero {
-      position: relative;           /* allow absolute children */
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -72,13 +80,8 @@
       text-align: center;
       padding: 6rem 1rem;
     }
-    .hero-content {
-      max-width: 800px;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
+    .hero-content { max-width: 800px; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
     .hero p {
       font-size: 1.2rem;
       margin-bottom: 2rem;
@@ -96,7 +99,6 @@
     }
     .btn-cta:hover { background: #e6e6e6; }
 
-    /* version badge inside hero */
     .version-badge {
       position: absolute;
       top: 2rem;
@@ -169,40 +171,42 @@
 <body>
   <header>
     <div class="header-container">
-      <a href="/" class="logo">API Integrations</a>
+      <a href="{{ url_for('index') }}" class="logo">API Integrations</a>
       <nav>
         <ul>
-          <li><a href="/">Home</a></li>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
           <li><a href="#docs">Docs</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
       <div class="header-buttons">
-        
-          <span class="btn btn-register"
-                style="background:transparent; border:none; cursor:default; color:#fff;">
-            patsteitor3000 (patsteitor3000@gmail.com)
+        {% if user %}
+          <span class="user-label">
+            {{ user.username }} ({{ user.email }})
           </span>
-          <a href="/logout" class="btn btn-login" style="border:none;">
-            Logout
-          </a>
-        
+          <a href="{{ url_for('logout') }}" class="btn btn-login">Logout</a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-register">Register</a>
+          <a href="{{ url_for('login') }}"    class="btn btn-login">Login</a>
+        {% endif %}
       </div>
     </div>
   </header>
 
   <section class="hero">
-    <!-- badge in top-right of hero -->
     <div class="version-badge">
       <span class="icon">&#10003;</span>
-      Vestion: 0.1.0
+      Version: {{ version }}
     </div>
-
     <div class="hero-content">
       <h1>Seamless API Integrations</h1>
       <p>Plug into over 100 services with one unified API. Fast, secure, and scalable – all the tools you need to connect your apps effortlessly.</p>
-      <a href="/register" class="btn-cta">Get Started</a>
+      {% if user %}
+        <a href="{{ url_for('plataform') }}" class="btn-cta">Go to Dashboard</a>
+      {% else %}
+        <a href="{{ url_for('register') }}" class="btn-cta">Get Started</a>
+      {% endif %}
     </div>
   </section>
 
@@ -221,8 +225,8 @@
         <p>Subscribe to events and receive instant HTTP callbacks for data changes.</p>
       </div>
       <div class="feature">
-        <h3>Enterprise-Grade</h3>
-        <p>High availability, SLA-backed uptime, and dedicated support for your mission-critical apps.</p>
+        <h3>Enterprise‑Grade</h3>
+        <p>High availability, SLA‑backed uptime, and dedicated support for your mission‑critical apps.</p>
       </div>
     </div>
   </section>

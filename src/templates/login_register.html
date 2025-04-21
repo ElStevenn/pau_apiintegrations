@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Register / Login – API Integrations</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family:Arial, sans-serif;
+      font-family:Arial,sans-serif;
       background:#f4f7f8;
       color:#333;
       display:flex;
       flex-direction:column;
       min-height:100vh;
     }
-    header {
-      background:#4A90E2;
-    }
+    header { background:#4A90E2; }
     .container {
       max-width:1000px;
       margin:0 auto;
@@ -31,15 +29,7 @@
       font-weight:bold;
       text-decoration:none;
     }
-    nav ul { display:flex; gap:1rem; }
-    nav a {
-      color:#fff;
-      text-decoration:none;
-      font-weight:bold;
-      font-size:0.95rem;
-    }
-    .header-buttons { display:flex; gap:0.5rem; }
-    .btn {
+    .header-buttons .btn {
       padding:0.5rem 1rem;
       border-radius:4px;
       cursor:pointer;
@@ -80,6 +70,11 @@
       max-width:400px;
     }
     h2 { text-align:center; margin-bottom:1rem; color:#333; }
+    .error {
+      color: #c00;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
     form { display:none; }
     form.active { display:block; }
     label {
@@ -114,23 +109,26 @@
   <header>
     <div class="container">
       <a href="{{ url_for('index') }}" class="logo">API Integrations</a>
-      <nav>
-        <ul>
-          <li><a href="{{ url_for('index') }}">Home</a></li>
-          <li><a href="#docs">Docs</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
       <div class="header-buttons">
-        <a href="{{ url_for('register') }}" class="btn btn-register {% if active=='register' %}active{% endif %}">Register</a>
-        <a href="{{ url_for('login') }}"    class="btn btn-login {% if active=='login' %}active{% endif %}">Login</a>
+        <a href="{{ url_for('register') }}"
+           class="btn btn-register {% if active=='register' %}active{% endif %}">
+          Register
+        </a>
+        <a href="{{ url_for('login') }}"
+           class="btn btn-login {% if active=='login' %}active{% endif %}">
+          Login
+        </a>
       </div>
     </div>
   </header>
 
   <main>
     <div class="form-wrapper">
+      <!-- show server‐rendered error (if any) -->
+      {% if error %}
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
       <!-- Register Form -->
       <form id="registerForm" class="{% if active=='register' %}active{% endif %}">
         <h2>Create Account</h2>
@@ -140,6 +138,7 @@
         <input type="email" id="regEmail" placeholder="you@example.com" required>
         <label for="regPassword">Password</label>
         <input type="password" id="regPassword" placeholder="Password" required>
+        <div id="regError" class="error"></div>
         <button type="submit">Register</button>
       </form>
 
@@ -150,64 +149,73 @@
         <input type="email" id="loginEmail" placeholder="you@example.com" required>
         <label for="loginPassword">Password</label>
         <input type="password" id="loginPassword" placeholder="Password" required>
+        <div id="loginError" class="error"></div>
         <button type="submit">Login</button>
       </form>
     </div>
   </main>
 
   <script>
-    // toggle tabs as before
     const btnReg = document.querySelector('.btn-register');
     const btnLog = document.querySelector('.btn-login');
     const regF   = document.getElementById('registerForm');
     const logF   = document.getElementById('loginForm');
+    const regErr = document.getElementById('regError');
+    const logErr = document.getElementById('loginError');
 
     function toggle(isReg) {
       regF .classList.toggle('active', isReg);
       logF .classList.toggle('active', !isReg);
       btnReg.classList.toggle('active', isReg);
       btnLog.classList.toggle('active', !isReg);
+      regErr.textContent = '';
+      logErr.textContent = '';
     }
     btnReg.addEventListener('click', () => toggle(true));
     btnLog.addEventListener('click', () => toggle(false));
 
-    // AJAX submission
+    // Register
     regF.addEventListener('submit', async e => {
       e.preventDefault();
+      regErr.textContent = '';
       const payload = {
         regName:     regF.regName.value,
         regEmail:    regF.regEmail.value,
         regPassword: regF.regPassword.value
       };
-      const res = await fetch('{{ url_for("register") }}', {
+      const res  = await fetch('{{ url_for("register") }}', {
         method: 'POST',
         headers: { 'Content-Type':'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload)
       });
       const json = await res.json();
-      if (json.user_id) {
+      if (res.ok && json.user_id) {
         window.location = '{{ url_for("plataform") }}';
       } else {
-        alert(json.error || 'Registration failed');
+        regErr.textContent = json.error || 'Registration failed';
       }
     });
 
+    // Login
     logF.addEventListener('submit', async e => {
       e.preventDefault();
+      logErr.textContent = '';
       const payload = {
         loginEmail:    logF.loginEmail.value,
         loginPassword: logF.loginPassword.value
       };
-      const res = await fetch('{{ url_for("login") }}', {
+      const res  = await fetch('{{ url_for("login") }}', {
         method: 'POST',
         headers: { 'Content-Type':'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload)
       });
       const json = await res.json();
-      if (json.user_id) {
+      if (res.ok && json.user_id) {
         window.location = '{{ url_for("plataform") }}';
       } else {
-        alert(json.error || 'Login failed');
+        logErr.textContent = json.error || 'Login failed';
       }
     });
   </script>
